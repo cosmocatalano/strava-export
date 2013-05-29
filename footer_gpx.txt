@@ -1,4 +1,0 @@
-
-		</trkseg>
-	</trk>
-</gpx>

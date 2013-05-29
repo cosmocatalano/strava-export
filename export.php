@@ -127,12 +127,12 @@ these are what you'll have to modify if you want to add new output formats
 //adds appropriate footer for selected filetype
 function add_footer($file_type) {
 	if ($file_type === 'GPX') {
-		$footer_loc = 'footer_gpx.txt';
+		$footer_loc = '</trkseg></trk></gpx>';
 	}
 	if ($file_type === 'TCX') {
-		$footer_loc = 'footer_tcx.txt';
+		$footer_loc = '</Track></Lap></Activity></Activities></TrainingCenterDatabase>';
 	}
-	$footer_source = file_get_contents($footer_loc);
+	$footer_source = $footer_loc;
 	return $footer_source;
 }
 	
@@ -141,7 +141,7 @@ function add_footer($file_type) {
 function add_header ($file_type, $ride_data_array) {
 	$replace_these_array = array('#export_time', '#ride_name', '#ride_time');
 	if ($file_type === 'GPX') {
-		$header_loc = 'header_gpx.txt';
+		$header_loc = '<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="Exported from Strava" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><metadata><link href="http://cosmocatalano.com/strava/export"><text>Strava GPX Exporter - Version 2</text></link><time>#export_time</time></metadata><trk><name>#ride_name</name><time>#ride_time</time><trkseg>';
 		$replace_these_array = array(
 			'#export_time', 
 			'#ride_name', 
@@ -154,7 +154,7 @@ function add_header ($file_type, $ride_data_array) {
 		);
 	}
 	if ($file_type === 'TCX') {
-		$header_loc = 'header_tcx.txt';
+		$header_loc = '<?xml version="1.0" encoding="UTF-8"?><TrainingCenterDatabase xsi:schemaLocation="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2 http://www.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd" xmlns:ns5="http://www.garmin.com/xmlschemas/ActivityGoals/v1" xmlns:ns3="http://www.garmin.com/xmlschemas/ActivityExtension/v2" xmlns:ns2="http://www.garmin.com/xmlschemas/UserProfile/v2" xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns4="http://www.garmin.com/xmlschemas/ProfileExtension/v1"><Activities><Activity Sport="Other"><Id>#ride_time</Id><Lap StartTime="#ride_time"><TotalTimeSeconds>#total_time</TotalTimeSeconds><DistanceMeters>#total_distance</DistanceMeters><Calories>0</Calories>#hr_avg#hr_max<Intensity>Active</Intensity>#cadence<TriggerMethod>Manual</TriggerMethod><Track>';
 		$replace_these_array = array(
 			'#export_time', 
 			'#ride_name', 
@@ -194,7 +194,7 @@ function add_header ($file_type, $ride_data_array) {
 		);
 	}
 	
-	$header_source = file_get_contents($header_loc);
+	$header_source = $header_loc;
 	$new_header = str_replace($replace_these_array, $replace_with_array, $header_source);
 	return $new_header;
 }
@@ -333,71 +333,71 @@ function datapoint_format ($file_type, $point_array) {
 END FUNCTIONS
 ***************/
 
-ini_set('user_agent', '[your app name here]'); //Strava says they like it if you use a user-agent name 
+function liberate_ride($ride_id, $file_type,) {
+	ini_set('user_agent', 'I would like access to my rides, please'); //Strava says they like it if you use a user-agent name 
+	date_default_timezone_set('America/New_York'); //assumes eastern
+	$user_url = 'http://app.strava.com/rides/'.$ride_id; 
 
-//PHONY USER INPUTS
-//these are where your user-provided data go.
-$file_type = 'GPX';
-$user_url = 'http://app.strava.com/rides/13969368'; 
+	//PARSING SUBMISSIONS, ASKING FOR API DATA
+	$target_array = get_target($user_url);
 
-//PARSING SUBMISSIONS, ASKING FOR API DATA
-$target_array = get_target($user_url);
+	//CHECKING THE RESPONSE FROM STRAVA
+	check_response($target_array[stream], $target_array[id]);
 
-//CHECKING THE RESPONSE FROM STRAVA
-check_response($target_array[stream], $target_array[id]);
+	//SELECTING THE DATA I WANT
+	$ride_data_array = loop_setup($file_type, $target_array);
 
-//SELECTING THE DATA I WANT
-$ride_data_array = loop_setup($file_type, $target_array);
+	//ASSEMBLING A HEADER FOR THE APPROPRIATE FILETYPE
+	$header = add_header($file_type, $ride_data_array);
 
-//ASSEMBLING A HEADER FOR THE APPROPRIATE FILETYPE
-$header = add_header($file_type, $ride_data_array);
+	//GETTING DATA FOR EACH POINT ON THE STRAVA TARGET
+	$stream_data = api_call ($target_array[id], $target_array[stream]);
 
-//GETTING DATA FOR EACH POINT ON THE STRAVA TARGET
-$stream_data = api_call ($target_array[id], $target_array[stream]);
-
-//SETTING INITIAL VALUES FOR THE LOOP
-$trackpoints = '';
-$start_epoch = gps_to_epoch($ride_data_array[ride_date]);
-if ($target_array[object] === 'segment') {  				//segments have no time stamps
-	$stop_at = count($stream_data->latlng) - 1;
-}else{														//stationary rides have no coordinates	
-	$stop_at = count($stream_data->time) - 1;
-}
-
-//TURNING THE CRANK
-for ($i = 0; $i <= $stop_at; $i++) {
-	$seconds_time = $stream_data->time[$i];
-	$timestamp = gps_date($start_epoch + $seconds_time);
-	$altitude = $stream_data->altitude[$i];
-	$cadence = $stream_data->cadence[$i];
-	$distance = $stream_data->distance[$i];
-	$latlng = $stream_data->latlng[$i];
-	$heartrate = $stream_data->heartrate[$i];
-	$temp = $stream_data->temp[$i];
-	if ($stream_data->watts[0] !== FALSE) { 
-		$watts = $stream_data->watts[$i];
-	}else{
-		$watts = $stream_data->watts_calc[$i];
+	//SETTING INITIAL VALUES FOR THE LOOP
+	$trackpoints = '';
+	$start_epoch = gps_to_epoch($ride_data_array[ride_date]);
+	if ($target_array[object] === 'segment') {  				//segments have no time stamps
+		$stop_at = count($stream_data->latlng) - 1;
+	}else{														//stationary rides have no coordinates	
+		$stop_at = count($stream_data->time) - 1;
 	}
 
-	$loop_result = array(
-		'time' => $timestamp, 
-		'altitude' => $altitude, 
-		'cadence' => $cadence, 
-		'distance' => $distance, 
-		'lat' => $latlng[0],
-		'lng' => $latlng[1],
-		'heartrate' => $heartrate,
-		'temp' => $temp,
-		'watts' => $watts,
-	);
-	
-$data_line = datapoint_format($file_type, $loop_result);
-$trackpoints = $trackpoints.$data_line;
+	//TURNING THE CRANK
+	for ($i = 0; $i <= $stop_at; $i++) {
+		$seconds_time = $stream_data->time[$i];
+		$timestamp = gps_date($start_epoch + $seconds_time);
+		$altitude = $stream_data->altitude[$i];
+		$cadence = $stream_data->cadence[$i];
+		$distance = $stream_data->distance[$i];
+		$latlng = $stream_data->latlng[$i];
+		$heartrate = $stream_data->heartrate[$i];
+		$temp = $stream_data->temp[$i];
+		if ($stream_data->watts[0] !== FALSE) { 
+			$watts = $stream_data->watts[$i];
+		}else{
+			$watts = $stream_data->watts_calc[$i];
+		}
+
+		$loop_result = array(
+			'time' => $timestamp, 
+			'altitude' => $altitude, 
+			'cadence' => $cadence, 
+			'distance' => $distance, 
+			'lat' => $latlng[0],
+			'lng' => $latlng[1],
+			'heartrate' => $heartrate,
+			'temp' => $temp,
+			'watts' => $watts,
+		);
+		$data_line = datapoint_format($file_type, $loop_result);
+		$trackpoints = $trackpoints.$data_line;
+	}
+
+	$footer = add_footer($file_type);
+	$contents = $header.$trackpoints.$footer;
+	$new_name = output_file($file_type, $target_array[id], $contents);
+	//$return = 'Congratulations - <a href="'.$target_array[id].'.'.strtolower($file_type).'">your file export</a> is ready.';
+	//return $return;
 }
 
-$footer = add_footer($file_type);
-$contents = $header.$trackpoints.$footer;
-$new_name = output_file($file_type, $target_array[id], $contents);
-echo 'Congratulations - <a href="'.$target_array[id].'.'.strtolower($file_type).'">your file export</a> is ready.';
 ?>
