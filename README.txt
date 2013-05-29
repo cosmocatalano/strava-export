@@ -6,8 +6,14 @@ http://cosmocatalano.com
 
 /**********************
 OVERVIEW
-A PHP script that takes ALL YOUR RIDES from the social fitness site Strava.com and saves them as files.
+This is a PHP script that takes ALL YOUR RIDES from the social fitness site Strava.com and saves them as files.
 The only user-required data is a Strava activity URL, and a file format (GPX or TCX, currently).
+
+Strava is CHANGING THEIR API VERY SOON (within days) 
+
+This will make downloading rides impossible, or at the very least awkward.
+
+Maybe they'll change this, maybe they won't. Best to get your data now and be safe about it.
 
 /**********************
 THINGS TO KNOW
@@ -19,8 +25,8 @@ ON A MAC/LINUX
 (this assumes you have PHP installed)
  -  download the ZIP from Github. Unzip it. Put it somwhere
  -  Open Terminal, type 'php', then the path to wherever the unzipped version is
- 	e.g., the full command would like look like 'php ~/Downloads/strava-export/exodus.php' 
- 	if you saved it in downloads. 
+ 	e.g., the full command would be 'php ~/Downloads/strava-export-exodus/exodus.php' 
+ 	if you saved it in your Downloads folder (on OS X). 
  -  Follow the instructions. The script will try and keep you updated.
  
 ON A PC
