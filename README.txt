@@ -1,33 +1,31 @@
 /***********************
 CREDITS
-Strava GPX Export Script
+Strava Export Script - EXODUS EDITION
 by Cosmo Catalano
 http://cosmocatalano.com
 
 /**********************
 OVERVIEW
-A PHP script that takes data from the social fitness site Strava.com and writes it as a file.
+A PHP script that takes ALL YOUR RIDES from the social fitness site Strava.com and saves them as files.
 The only user-required data is a Strava activity URL, and a file format (GPX or TCX, currently).
 
 /**********************
-MORE DETAILS
-The idea was to create a simple version of the script I put together to export GPX/TCX files from Strava's V1 API,
-so that developers could add export capabilities to their Strava applications. 
+THINGS TO KNOW
+This is designed to run from the command line, and to save your files as GPX or TCX to your home directory.
+Keep in mind that this may take many gigabytes of space if you have a lot of rides. 
+Rides will be saved as their strava ID. Not descriptive, best solution given the constraints :(
 
-I also wrote this with an eye toward making it easy for future developers to add new export formats. 
-Just write a header and footer text file, then modify the datapoint_format(); function to specify the necessary 
-transformations to the data returned from Strava's API for each point in the ride. 
-
-Currently, the script puts as much data as it possibly can into each file. Occasionally, this has led to 
-compatibility issues with GPX files, as some apps don't recognize the Temp, Cadence, and HR extensions. 
-
-Rather than bother making an input form, I've left the user inputs in the script as $file_type and $user_url.
-
-Don't forget to set a user-agent.  
+ON A MAC/LINUX
+(this assumes you have PHP installed)
+ -  download the ZIP from Github. Unzip it. Put it somwhere
+ -  Open Terminal, type 'php', then the path to wherever the unzipped version is
+ 	e.g., the full command would like look like 'php ~/Downloads/strava-export/exodus.php' 
+ 	if you saved it in downloads. 
+ -  Follow the instructions. The script will try and keep you updated.
+ 
+ON A PC
+- uh...probably Google "command line php windows"? Honestly, I don't know & don't have time.
+ 
+I made this in a hurry. Not sure what'll happen with trainer rides, skiing/walking events, etc. 
 
 /**********************
-WORKING EXAMPLE
-There is a polished version of this running at http://cosmocatalano.com/strava/export/.
-It also includes few back-end modifications to get around the limitations of GoDaddy's shared hosting account.
-
-GL;HF
