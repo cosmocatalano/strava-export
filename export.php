@@ -333,7 +333,7 @@ function datapoint_format ($file_type, $point_array) {
 END FUNCTIONS
 ***************/
 
-function liberate_ride($ride_id, $file_type,) {
+function liberate_ride($ride_id, $file_type) {
 	ini_set('user_agent', 'I would like access to my rides, please'); //Strava says they like it if you use a user-agent name 
 	date_default_timezone_set('America/New_York'); //assumes eastern
 	$user_url = 'http://app.strava.com/rides/'.$ride_id; 
