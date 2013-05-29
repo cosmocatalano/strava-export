@@ -33,9 +33,9 @@ foreach($total_rides as $ride) {
 	liberate_ride($ride['id'], $export_type);
 	echo $echo."done!";
 }
-echo "\nall done!";
+echo "\n...you have successfully downloaded all your rides from Strava.\n";
+echo "\nIf you're wondering where they are, check the READ ME.\n";
+echo "\nPlease become a premium Strava member and suggest that they to allow you more access to your data.\n";
 
-//$empty = file_get_contents('http://app.strava.com/api/v1/rides?athleteId=6561&offset=800');
-//print_r(json_decode($empty, TRUE));
 	
 ?>
