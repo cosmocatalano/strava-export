@@ -15,9 +15,9 @@ This is a PHP script that takes ALL YOUR RIDES from the social fitness site Stra
 
 /**********************
 THINGS TO KNOW
-This is designed to run from the command line, and will save your files as GPX or TCX to your home (~) directory. On OS X, it's the folder that looks like a house. Keep in mind that this may take many gigabytes of space if you have a lot of rides. 
+This is designed to run from the command line, and will save your files as GPX or TCX to your home (~) directory; on OS X, it's the folder that looks like a house. Keep in mind that this may take many gigabytes of space if you have a lot of rides. It might also take a long time. 
 
-Rides will be saved as their strava activity ID. Not descriptive, but the best solution given the constraints.
+Rides will be saved as their Strava activity ID. Not descriptive, but the best solution given the constraints.
 
 ON A MAC/LINUX
 (this assumes you have PHP installed)
