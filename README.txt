@@ -6,24 +6,22 @@ http://cosmocatalano.com
 
 /**********************
 OVERVIEW
-This is a PHP script that takes ALL YOUR RIDES from the social fitness site Strava.com and saves them as files.
-The only user-required data is a Strava activity URL, and a file format (GPX or TCX, currently).
 
-Strava is CHANGING THEIR API VERY SOON (within days).
+Strava is CHANGING THEIR API VERY SOON (within days). This is good because privacy will improve. This is bad because it will make downloading your ride data much harder. 
 
-This will make downloading rides impossible, or at the very least awkward.
+Maybe they'll change this (they should), maybe they won't. Best to get your data now and be safe about it.
 
-Maybe they'll change this, maybe they won't. Best to get your data now and be safe about it.
+This is a PHP script that takes ALL YOUR RIDES from the social fitness site Strava.com and saves them as files. The only user-required data is a file format (GPX or TCX) and a user ID (when you sign into Strava, click on your face in the upper-right. When that page loads, the number at the end of the URL in the address bar is your user ID) 
 
 /**********************
 THINGS TO KNOW
-This is designed to run from the command line, and will save your files as GPX or TCX to your home (~) directory. On OS X, it's the folder that looks like a house.
-Keep in mind that this may take many gigabytes of space if you have a lot of rides. 
-Rides will be saved as their strava ID. Not descriptive, but the best solution given the constraints :(
+This is designed to run from the command line, and will save your files as GPX or TCX to your home (~) directory. On OS X, it's the folder that looks like a house. Keep in mind that this may take many gigabytes of space if you have a lot of rides. 
+
+Rides will be saved as their strava activity ID. Not descriptive, but the best solution given the constraints.
 
 ON A MAC/LINUX
 (this assumes you have PHP installed)
- -  download the ZIP from Github. Unzip it. Put it somwhere
+ -  download the ZIP from Github. Unzip it.
  -  Open Terminal, type 'php', then the path to wherever the unzipped version is
  	e.g., the full command would be 'php ~/Downloads/strava-export-exodus/exodus.php' 
  	if you saved it in your Downloads folder (on OS X). 
