@@ -7,7 +7,7 @@ http://cosmocatalano.com
 /**********************
 OVERVIEW
 
-Strava is CHANGING THEIR API VERY SOON (within days). This is good because privacy will improve. This is bad because it will make downloading your ride data much harder. 
+Strava is CHANGING THEIR API VERY SOON (within days - http://engineering.strava.com/update-on-the-api-v3-release-and-v1-v2-retirement/). This is good because privacy will improve. This is bad because it will make downloading your ride data much harder. 
 
 Maybe they'll change this (they should), maybe they won't. Best to get your data now and be safe about it.
 
