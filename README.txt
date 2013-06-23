@@ -17,6 +17,8 @@ This is a PHP script that takes ALL YOUR RIDES from the social fitness site Stra
 THINGS TO KNOW
 This is designed to run from the command line, and will save your files as GPX or TCX to your home (~) directory; on OS X, it's the folder that looks like a house. Keep in mind that this may take many gigabytes of space if you have a lot of rides. It might also take a long time. 
 
+The script requires that readline() be installed with your version of PHP. If you encounter a "Call to undefined function readline()" error, please see this work-around: https://github.com/cosmocatalano/strava-export/issues/1#issuecomment-19875546
+
 Rides will be saved as their Strava activity ID. Not descriptive, but the best solution given the constraints.
 
 ON A MAC/LINUX
